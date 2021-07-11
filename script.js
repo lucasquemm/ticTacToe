@@ -54,7 +54,7 @@ const Tabuleiro = (() => {
 
   tabuleiroH.forEach((casadiv, casaindice) => {
     casadiv.addEventListener('click', () => {
-      let jogadorDaVez = (estados.turno ? eu : cpu).sinalJogador
+      let jogadorDaVez = (estados.turno ? jogador1 : jogador2).sinalJogador
       let casa = estados.casas[casaindice]
 
       if (!casa.marcado) {
@@ -68,5 +68,9 @@ const Tabuleiro = (() => {
   })
 })()
 
-const eu = Jogador('X')
-const cpu = Jogador('O')
+const gameMode = () => {}
+
+function vsCpu() {}
+
+const jogador1 = Jogador('X')
+const jogador2 = Jogador('O')

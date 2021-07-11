@@ -1,11 +1,48 @@
+body {
+  background-color: rgb(236, 218, 218);
+}
+
+.base {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  width: 800px;
+}
+
+.painel {
+  display: flex;
+  height: 48px;
+  background-color: rgb(247, 240, 220);
+  justify-content: center;
+}
+
+.painelBotoes {
+  padding: 16px;
+  justify-content: center;
+}
+
+.painelbtn {
+  background-color: rgb(250, 212, 165);
+  border: 0;
+  margin-left: 8px;
+}
+
+.painelbtn:hover {
+  border: 2px solid black;
+}
+
+.painelbtn:active {
+  background-color: rgba(255, 228, 196, 0.753);
+}
+
 .jogo {
   display: grid;
   justify-content: center;
-  grid-template-columns: 100px 100px 100px;
-  grid-template-rows: 100px 100px 100px;
+  grid-template-columns: 96px 96px 96px;
+  grid-template-rows: 96px 96px 96px;
   column-gap: 8px;
   row-gap: 8px;
-  background-color: rgb(255, 164, 164);
+  background-color: rgba(255, 164, 164, 0.658);
   padding: 8px;
 }
 .casa {
@@ -13,6 +50,10 @@
   font-size: 30px;
   justify-content: center;
   background-color: bisque;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 96px;
+  font-size: 50px;
 }
 
 .casa:hover {
