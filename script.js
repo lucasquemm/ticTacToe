@@ -1,4 +1,6 @@
 let tabuleiroH = document.querySelectorAll('.casa')
+let cpuMode = document.querySelector('#modeCpu')
+let playerMode = document.querySelector('#modePlayer')
 
 const Jogador = (sinal) => {
   const sinalJogador = sinal
@@ -52,25 +54,39 @@ const Tabuleiro = (() => {
     }
   }
 
-  tabuleiroH.forEach((casadiv, casaindice) => {
-    casadiv.addEventListener('click', () => {
-      let jogadorDaVez = (estados.turno ? jogador1 : jogador2).sinalJogador
-      let casa = estados.casas[casaindice]
+  // const vsCpu = () => {
+  //   function randomizador(min, max) {
+  //     min = Math.ceil(min)
+  //     max = Math.floor(max)
+  //     return Math.floor(Math.random() * (max - min)) + min
+  //   }
+  //   return randomizador(0, 8)
+  // }
 
-      if (!casa.marcado) {
-        casadiv.textContent = jogadorDaVez
-        casa.marcado = !casa.marcado
-        casa.sinal = jogadorDaVez
-        estados.turno = !estados.turno
-        verificaVitoria()
-      }
-    })
+  // cpuMode.addEventListener('click', () => {
+  //   vsCpu()
+  // })
+  playerMode.addEventListener('click', () => {
+    vsPlayer()
   })
+
+  const vsPlayer = () => {
+    tabuleiroH.forEach((casadiv, casaindice) => {
+      casadiv.addEventListener('click', () => {
+        let jogadorDaVez = (estados.turno ? jogador1 : jogador2).sinalJogador
+        let casa = estados.casas[casaindice]
+
+        if (!casa.marcado) {
+          casadiv.textContent = jogadorDaVez
+          casa.marcado = !casa.marcado
+          casa.sinal = jogadorDaVez
+          estados.turno = !estados.turno
+          verificaVitoria()
+        }
+      })
+    })
+  }
 })()
-
-const gameMode = () => {}
-
-function vsCpu() {}
 
 const jogador1 = Jogador('X')
 const jogador2 = Jogador('O')
