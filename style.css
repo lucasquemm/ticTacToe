@@ -64,3 +64,15 @@ body {
 .casa:hover {
   background-color: azure;
 }
+
+.resultado {
+  display: flex;
+  height: 48px;
+  background-color: rgb(247, 240, 220);
+  justify-content: center;
+}
+
+.mensagemResultado {
+  background-color: rgb(250, 212, 165);
+  width: max-content;
+}

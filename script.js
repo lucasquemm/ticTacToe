@@ -1,6 +1,7 @@
 let tabuleiroH = document.querySelectorAll('.casa')
 let cpuMode = document.querySelector('#modeCpu')
 let playerMode = document.querySelector('#modePlayer')
+let resultadodiv = document.querySelector('.resultado')
 
 const Jogador = (sinal) => {
   const sinalJogador = sinal
@@ -11,6 +12,7 @@ const Jogador = (sinal) => {
 const Tabuleiro = (() => {
   let estados = {
     turno: true,
+    vitoria: false,
     casas: [
       { marcado: false, sinal: undefined },
       { marcado: false, sinal: undefined },
@@ -23,6 +25,23 @@ const Tabuleiro = (() => {
       { marcado: false, sinal: undefined },
     ],
   }
+  return { estados }
+})()
+
+const Jogo = (() => {
+  let estados = Tabuleiro.estados
+
+  const mensagem = (vencedor) => {
+    let textResultado = document.createElement('p')
+    textResultado.classList.add('mensagemResultado')
+    if (estados.vitoria) {
+      resultadodiv.appendChild(textResultado)
+      textResultado.textContent = `${vencedor} ganhou!`
+    } else {
+      resultadodiv.appendChild(textResultado)
+      textResultado.textContent = `empate`
+    }
+  }
 
   const verificaVitoria = () => {
     const listaVitorias = [
@@ -33,9 +52,10 @@ const Tabuleiro = (() => {
       [0, 3, 6],
       [1, 4, 7],
       [2, 5, 8],
-      //diagonal
+      //vertical
       [0, 4, 8],
       [2, 4, 6],
+      //diagonal
     ]
 
     let { casas } = estados
@@ -46,26 +66,14 @@ const Tabuleiro = (() => {
         casas[a].sinal === casas[c].sinal &&
         casas[a].sinal != undefined
       ) {
-        return alert(`${casas[a].sinal} ganhou!`)
+        return [(estados.vitoria = true), mensagem(casas[a].sinal)]
       }
     }
     if (casas.every((cadaCasa) => cadaCasa.sinal != undefined)) {
-      return alert('EMPATE')
+      return [(estados.vitoria = false), mensagem()]
     }
   }
 
-  // const vsCpu = () => {
-  //   function randomizador(min, max) {
-  //     min = Math.ceil(min)
-  //     max = Math.floor(max)
-  //     return Math.floor(Math.random() * (max - min)) + min
-  //   }
-  //   return randomizador(0, 8)
-  // }
-
-  // cpuMode.addEventListener('click', () => {
-  //   vsCpu()
-  // })
   playerMode.addEventListener('click', () => {
     vsPlayer()
   })
