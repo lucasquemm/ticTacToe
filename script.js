@@ -5,14 +5,14 @@ let resultadodiv = document.querySelector('.resultado')
 
 const Jogador = (sinal) => {
   const sinalJogador = sinal
-
   return { sinalJogador }
 }
 
 const Tabuleiro = (() => {
-  let estados = {
+  let estadoInicial = {
     turno: true,
     vitoria: false,
+    fimDeJogo: false,
     casas: [
       { marcado: false, sinal: undefined },
       { marcado: false, sinal: undefined },
@@ -25,22 +25,26 @@ const Tabuleiro = (() => {
       { marcado: false, sinal: undefined },
     ],
   }
-  return { estados }
-})()
+  let estados = { ...estadoInicial }
 
-const Jogo = (() => {
-  let estados = Tabuleiro.estados
+  const resetaEstados = () => {
+    estados = { ...estadoInicial }
+  }
 
-  const mensagem = (vencedor) => {
-    let textResultado = document.createElement('p')
-    textResultado.classList.add('mensagemResultado')
-    if (estados.vitoria) {
-      resultadodiv.appendChild(textResultado)
-      textResultado.textContent = `${vencedor} ganhou!`
-    } else {
-      resultadodiv.appendChild(textResultado)
-      textResultado.textContent = `empate`
+  const obterMensagem = (vencedor) => {
+    return estados.vitoria ? `${vencedor} ganhou!` : `empate`
+  }
+
+  const marcaCasa = (casaindice) => {
+    let jogadorDaVez = (estados.turno ? jogador1 : jogador2).sinalJogador
+    let casa = estados.casas[casaindice]
+
+    if (!casa.marcado) {
+      casa.marcado = !casa.marcado
+      casa.sinal = jogadorDaVez
+      estados.turno = !estados.turno
     }
+    return jogadorDaVez
   }
 
   const verificaVitoria = () => {
@@ -66,12 +70,33 @@ const Jogo = (() => {
         casas[a].sinal === casas[c].sinal &&
         casas[a].sinal != undefined
       ) {
-        return [(estados.vitoria = true), mensagem(casas[a].sinal)]
+        estados.vitoria = true
+        estados.fimDeJogo = true
+        return obterMensagem(casas[a].sinal)
       }
     }
     if (casas.every((cadaCasa) => cadaCasa.sinal != undefined)) {
-      return [(estados.vitoria = false), mensagem()]
+      estados.vitoria = false
+      estados.fimDeJogo = true
+      return obterMensagem()
     }
+  }
+
+  return { verificaVitoria, marcaCasa, resetaEstados }
+})()
+
+const Jogo = (() => {
+  const exibirMensagem = (mensagemdResultado) => {
+    let textResultado = document.querySelector('.mensagemResultado')
+    textResultado.textContent = mensagemdResultado
+  }
+
+  const resetJogo = () => {
+    tabuleiroH.forEach((casadiv) => {
+      casadiv.textContent = ''
+    })
+    exibirMensagem('')
+    Tabuleiro.resetaEstados()
   }
 
   playerMode.addEventListener('click', () => {
@@ -81,15 +106,10 @@ const Jogo = (() => {
   const vsPlayer = () => {
     tabuleiroH.forEach((casadiv, casaindice) => {
       casadiv.addEventListener('click', () => {
-        let jogadorDaVez = (estados.turno ? jogador1 : jogador2).sinalJogador
-        let casa = estados.casas[casaindice]
-
-        if (!casa.marcado) {
-          casadiv.textContent = jogadorDaVez
-          casa.marcado = !casa.marcado
-          casa.sinal = jogadorDaVez
-          estados.turno = !estados.turno
-          verificaVitoria()
+        casadiv.textContent = Tabuleiro.marcaCasa(casaindice)
+        let resultado = Tabuleiro.verificaVitoria()
+        if (resultado) {
+          exibirMensagem(resultado)
         }
       })
     })
