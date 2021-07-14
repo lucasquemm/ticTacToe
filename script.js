@@ -1,7 +1,6 @@
 let tabuleiroH = document.querySelectorAll('.casa')
 let cpuMode = document.querySelector('#modeCpu')
 let playerMode = document.querySelector('#modePlayer')
-let resultadodiv = document.querySelector('.resultado')
 
 const Jogador = (sinal) => {
   const sinalJogador = sinal
@@ -27,6 +26,12 @@ const Tabuleiro = (() => {
   }
   let estados = { ...estadoInicial }
 
+  const casasEmAberto = () => {
+    return estados.casas
+      .filter((casa) => !casa.marcado)
+      .map((casa) => estados.casas.indexOf(casa))
+  }
+
   const resetaEstados = () => {
     estados = { ...estadoInicial }
   }
@@ -39,12 +44,14 @@ const Tabuleiro = (() => {
     let jogadorDaVez = (estados.turno ? jogador1 : jogador2).sinalJogador
     let casa = estados.casas[casaindice]
 
-    if (!casa.marcado) {
+    if (!casa.marcado && !estados.fimDeJogo) {
       casa.marcado = !casa.marcado
       casa.sinal = jogadorDaVez
       estados.turno = !estados.turno
+      return jogadorDaVez
     }
-    return jogadorDaVez
+
+    return casa.sinal
   }
 
   const verificaVitoria = () => {
@@ -82,7 +89,7 @@ const Tabuleiro = (() => {
     }
   }
 
-  return { verificaVitoria, marcaCasa, resetaEstados }
+  return { verificaVitoria, marcaCasa, resetaEstados, casasEmAberto, estados }
 })()
 
 const Jogo = (() => {
@@ -103,6 +110,10 @@ const Jogo = (() => {
     vsPlayer()
   })
 
+  cpuMode.addEventListener('click', () => {
+    console.log(vsCpu())
+  })
+
   const vsPlayer = () => {
     tabuleiroH.forEach((casadiv, casaindice) => {
       casadiv.addEventListener('click', () => {
@@ -114,7 +125,20 @@ const Jogo = (() => {
       })
     })
   }
+
+  const vsCpu = () => {
+    let casasLivres = Tabuleiro.casasEmAberto()
+    let escolhaDoCpu = casasLivres[randomizador(0, casasLivres.length)]
+
+    tabuleiroH[escolhaDoCpu].textContent = Tabuleiro.marcaCasa(escolhaDoCpu)
+    console.log(escolhaDoCpu)
+  }
 })()
 
+function randomizador(min, max) {
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min)) + min
+}
 const jogador1 = Jogador('X')
 const jogador2 = Jogador('O')
