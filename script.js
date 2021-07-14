@@ -8,33 +8,25 @@ const Jogador = (sinal) => {
 }
 
 const Tabuleiro = (() => {
-  let estadoInicial = {
-    turno: true,
-    vitoria: false,
-    fimDeJogo: false,
-    casas: [
-      { marcado: false, sinal: undefined },
-      { marcado: false, sinal: undefined },
-      { marcado: false, sinal: undefined },
-      { marcado: false, sinal: undefined },
-      { marcado: false, sinal: undefined },
-      { marcado: false, sinal: undefined },
-      { marcado: false, sinal: undefined },
-      { marcado: false, sinal: undefined },
-      { marcado: false, sinal: undefined },
-    ],
-  }
-  let estados = { ...estadoInicial }
+  let estados
 
   const casasEmAberto = () => {
-    return estados.casas
-      .filter((casa) => !casa.marcado)
-      .map((casa) => estados.casas.indexOf(casa))
+    let indices = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    return indices.filter((indice) => !estados.casas[indice])
   }
 
   const resetaEstados = () => {
-    estados = { ...estadoInicial }
+    estados = {
+      turno: true,
+      vitoria: false,
+      fimDeJogo: false,
+      casas: Array(9).fill(undefined),
+    }
   }
+
+  const getTurno = () => estados.turno
+
+  const getCasas = () => estados.casas.filter((casa) => !casa)
 
   const obterMensagem = (vencedor) => {
     return estados.vitoria ? `${vencedor} ganhou!` : `empate`
@@ -44,14 +36,13 @@ const Tabuleiro = (() => {
     let jogadorDaVez = (estados.turno ? jogador1 : jogador2).sinalJogador
     let casa = estados.casas[casaindice]
 
-    if (!casa.marcado && !estados.fimDeJogo) {
-      casa.marcado = !casa.marcado
-      casa.sinal = jogadorDaVez
+    if (!casa && !estados.fimDeJogo) {
+      estados.casas[casaindice] = jogadorDaVez
       estados.turno = !estados.turno
       return jogadorDaVez
     }
 
-    return casa.sinal
+    return casa
   }
 
   const verificaVitoria = () => {
@@ -73,26 +64,36 @@ const Tabuleiro = (() => {
 
     for (let [a, b, c] of listaVitorias) {
       if (
-        casas[a].sinal === casas[b].sinal &&
-        casas[a].sinal === casas[c].sinal &&
-        casas[a].sinal != undefined
+        casas[a] === casas[b] &&
+        casas[a] === casas[c] &&
+        casas[a] != undefined
       ) {
         estados.vitoria = true
         estados.fimDeJogo = true
-        return obterMensagem(casas[a].sinal)
+        return obterMensagem(casas[a])
       }
     }
-    if (casas.every((cadaCasa) => cadaCasa.sinal != undefined)) {
+    if (casas.every((cadaCasa) => cadaCasa != undefined)) {
       estados.vitoria = false
       estados.fimDeJogo = true
       return obterMensagem()
     }
   }
-
-  return { verificaVitoria, marcaCasa, resetaEstados, casasEmAberto, estados }
+  resetaEstados()
+  return {
+    verificaVitoria,
+    marcaCasa,
+    resetaEstados,
+    casasEmAberto,
+    getTurno,
+    getCasas,
+    estados,
+  }
 })()
 
 const Jogo = (() => {
+  let contraCpu = false
+
   const exibirMensagem = (mensagemdResultado) => {
     let textResultado = document.querySelector('.mensagemResultado')
     textResultado.textContent = mensagemdResultado
@@ -107,31 +108,36 @@ const Jogo = (() => {
   }
 
   playerMode.addEventListener('click', () => {
-    vsPlayer()
+    contraCpu = false
+    resetJogo()
   })
 
   cpuMode.addEventListener('click', () => {
-    console.log(vsCpu())
+    contraCpu = true
+    resetJogo()
   })
 
-  const vsPlayer = () => {
-    tabuleiroH.forEach((casadiv, casaindice) => {
-      casadiv.addEventListener('click', () => {
-        casadiv.textContent = Tabuleiro.marcaCasa(casaindice)
-        let resultado = Tabuleiro.verificaVitoria()
-        if (resultado) {
-          exibirMensagem(resultado)
-        }
-      })
+  tabuleiroH.forEach((casadiv, casaindice) => {
+    casadiv.addEventListener('click', () => {
+      casadiv.textContent = Tabuleiro.marcaCasa(casaindice)
+      if (contraCpu && !Tabuleiro.getTurno()) {
+        vsCpu()
+      }
+      let resultado = Tabuleiro.verificaVitoria()
+      if (resultado) {
+        exibirMensagem(resultado)
+      }
     })
-  }
+  })
 
   const vsCpu = () => {
     let casasLivres = Tabuleiro.casasEmAberto()
     let escolhaDoCpu = casasLivres[randomizador(0, casasLivres.length)]
 
-    tabuleiroH[escolhaDoCpu].textContent = Tabuleiro.marcaCasa(escolhaDoCpu)
-    console.log(escolhaDoCpu)
+    if (casasLivres.length) {
+      tabuleiroH[escolhaDoCpu].textContent = Tabuleiro.marcaCasa(escolhaDoCpu)
+      console.log(escolhaDoCpu)
+    }
   }
 })()
 

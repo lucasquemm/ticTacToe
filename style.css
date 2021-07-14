@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   background-color: rgb(236, 218, 218);
 }
@@ -28,7 +32,7 @@ body {
 }
 
 .painelbtn:hover {
-  border: 2px solid black;
+  outline: 2px solid black;
 }
 
 .painelbtn:active {
@@ -36,7 +40,7 @@ body {
 }
 
 .painelbtn:focus {
-  border: 2px solid black;
+  outline: 2px solid black;
   background-color: rgba(226, 203, 174, 0.753);
 }
 
