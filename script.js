@@ -2,10 +2,14 @@ let tabuleiroH = document.querySelectorAll('.casa')
 let cpuMode = document.querySelector('#modeCpu')
 let playerMode = document.querySelector('#modePlayer')
 
-const Jogador = (sinal) => {
-  const sinalJogador = sinal
-  return { sinalJogador }
-}
+const Jogador = (() => {
+  const getSinal = (indice) => {
+    let sinalJogador = ['X', 'O']
+    return sinalJogador[indice]
+  }
+
+  return { getSinal }
+})()
 
 const Tabuleiro = (() => {
   let estados
@@ -33,7 +37,7 @@ const Tabuleiro = (() => {
   }
 
   const marcaCasa = (casaindice) => {
-    let jogadorDaVez = (estados.turno ? jogador1 : jogador2).sinalJogador
+    let jogadorDaVez = estados.turno ? Jogador.getSinal(0) : Jogador.getSinal(1)
     let casa = estados.casas[casaindice]
 
     if (!casa && !estados.fimDeJogo) {
@@ -146,5 +150,3 @@ function randomizador(min, max) {
   max = Math.floor(max)
   return Math.floor(Math.random() * (max - min)) + min
 }
-const jogador1 = Jogador('X')
-const jogador2 = Jogador('O')

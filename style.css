@@ -13,14 +13,22 @@ body {
   width: 800px;
 }
 
+.sinal {
+  display: flex;
+  height: auto;
+  justify-content: start;
+
+  margin: 0%;
+}
+
 .painel {
   display: flex;
   height: 48px;
   background-color: rgb(247, 240, 220);
-  justify-content: center;
+  justify-content: space-between;
 }
 
-.painelBotoes {
+.painelMenu {
   padding: 16px;
   justify-content: center;
 }
