@@ -1,15 +1,7 @@
 let tabuleiroH = document.querySelectorAll('.casa')
 let cpuMode = document.querySelector('#modeCpu')
 let playerMode = document.querySelector('#modePlayer')
-
-const Jogador = (() => {
-  const getSinal = (indice) => {
-    let sinalJogador = ['X', 'O']
-    return sinalJogador[indice]
-  }
-
-  return { getSinal }
-})()
+let trocarSinal = document.querySelector('#trocaSinal')
 
 const Tabuleiro = (() => {
   let estados
@@ -37,7 +29,7 @@ const Tabuleiro = (() => {
   }
 
   const marcaCasa = (casaindice) => {
-    let jogadorDaVez = estados.turno ? Jogador.getSinal(0) : Jogador.getSinal(1)
+    let jogadorDaVez = estados.turno ? 'X' : 'O'
     let casa = estados.casas[casaindice]
 
     if (!casa && !estados.fimDeJogo) {
@@ -96,6 +88,7 @@ const Tabuleiro = (() => {
 })()
 
 const Jogo = (() => {
+  let trocaSinal = false
   let contraCpu = false
 
   const exibirMensagem = (mensagemdResultado) => {
@@ -114,22 +107,35 @@ const Jogo = (() => {
   playerMode.addEventListener('click', () => {
     contraCpu = false
     resetJogo()
+
+    playerMode.style.outline = '2px solid black'
+    cpuMode.style.outline = '0px'
   })
 
   cpuMode.addEventListener('click', () => {
     contraCpu = true
     resetJogo()
+
+    cpuMode.style.outline = '2px solid black'
+    playerMode.style.outline = '0px'
+  })
+
+  trocarSinal.addEventListener('click', () => {
+    contraCpu = true
+    trocaSinal = !trocaSinal
+    if (trocaSinal) {
+      vsCpu()
+    }
   })
 
   tabuleiroH.forEach((casadiv, casaindice) => {
     casadiv.addEventListener('click', () => {
       casadiv.textContent = Tabuleiro.marcaCasa(casaindice)
-      if (contraCpu && !Tabuleiro.getTurno()) {
-        vsCpu()
-      }
       let resultado = Tabuleiro.verificaVitoria()
       if (resultado) {
         exibirMensagem(resultado)
+      } else if (contraCpu && trocaSinal == Tabuleiro.getTurno()) {
+        vsCpu()
       }
     })
   })
@@ -140,7 +146,9 @@ const Jogo = (() => {
 
     if (casasLivres.length) {
       tabuleiroH[escolhaDoCpu].textContent = Tabuleiro.marcaCasa(escolhaDoCpu)
-      console.log(escolhaDoCpu)
+      if (Tabuleiro.verificaVitoria()) {
+        exibirMensagem(Tabuleiro.verificaVitoria())
+      }
     }
   }
 })()
