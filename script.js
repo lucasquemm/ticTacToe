@@ -35,6 +35,7 @@ const Tabuleiro = (() => {
     if (!casa && !estados.fimDeJogo) {
       estados.casas[casaindice] = jogadorDaVez
       estados.turno = !estados.turno
+
       return jogadorDaVez
     }
 
@@ -91,6 +92,15 @@ const Jogo = (() => {
   let trocaSinal = false
   let contraCpu = false
 
+  const jogoIniciado = () => {
+    let casasLivres = Tabuleiro.casasEmAberto()
+    if (casasLivres.length < 9) {
+      return true
+    } else {
+      return false
+    }
+  }
+
   const exibirMensagem = (mensagemdResultado) => {
     let textResultado = document.querySelector('.mensagemResultado')
     textResultado.textContent = mensagemdResultado
@@ -104,6 +114,8 @@ const Jogo = (() => {
     Tabuleiro.resetaEstados()
   }
 
+  playerMode.style.outline = '2px solid black'
+
   playerMode.addEventListener('click', () => {
     contraCpu = false
     resetJogo()
@@ -115,6 +127,9 @@ const Jogo = (() => {
   cpuMode.addEventListener('click', () => {
     contraCpu = true
     resetJogo()
+    if (trocaSinal) {
+      vsCpu()
+    }
 
     cpuMode.style.outline = '2px solid black'
     playerMode.style.outline = '0px'
@@ -123,9 +138,16 @@ const Jogo = (() => {
   trocarSinal.addEventListener('click', () => {
     contraCpu = true
     trocaSinal = !trocaSinal
-    if (trocaSinal) {
-      vsCpu()
+
+    if (jogoIniciado()) {
+      resetJogo()
+    } else {
+      if (trocaSinal) {
+        vsCpu()
+      }
     }
+    cpuMode.style.outline = '2px solid black'
+    playerMode.style.outline = '0px'
   })
 
   tabuleiroH.forEach((casadiv, casaindice) => {
